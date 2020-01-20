@@ -1,0 +1,30 @@
+version: '3'
+volumes:
+  mysql_data:
+services:
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=app_crawler
+  db_client:
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+      - db
+    ports:
+      - "80:80"
+    environment:
+      - PMA_ARBITRARY=1
+  crawler:
+    build: ./
+    volumes:
+      - .:/app-crawler
+    dns:
+      - 8.8.8.8
+    depends_on:
+      - db
+
